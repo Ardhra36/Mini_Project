@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Real Fake Job Prediction</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+	<style>
+		body{font-family:Lato,'Helvetica Neue',Helvetica,Arial,sans-serif;}
+		h1,h2,h3,h4,h5,h6{font-family:Lato,'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;}
+		.title{color:#273582;}
+		#fetch{cursor:pointer;}
+		#stopfetch{cursor:pointer;}
+		#fetch:hover,#fetch:active,#fetch:focus,#stopfetch:hover,#stopfetch:active,#stopfetch:focus{background-color:#ff7f00;border-color:#ff7f00;}
+		footer.footer{padding-top:1rem;padding-bottom:1rem;background-color: #e3e8ed!important;}
+		footer a{color:#000;font-weight:600;text-decoration:none;}
+		footer li a:hover{color:orange;}
+		footer li i{color:#363e75;}
+		footer li i:hover{color:orange;}
+		.navbar-light .navbar-brand{color: rgba(0,0,0,.9);}
+		.navbar-light .navbar-brand {margin-left: auto;margin-right: auto;}
+		.container-fluid{width:90%;}
+		.load{
+			height:100%;
+			background-color:#ffffffbe;
+			position:absolute;
+			width:100%;
+			z-index:1000;
+			display:none;
+		}
+		.loader {
+		  border: 10px solid #f3f3f3;
+		  border-radius: 50%;
+		  border-top: 10px solid #3498db;
+		  width: 30px;
+		  height: 30px;
+		  margin-left:auto;
+		  margin-right:auto;
+		  margin-top:30%;
+		  -webkit-animation: spin 2s linear infinite; /* Safari */
+		  animation: spin 2s linear infinite;
+		}
+
+		/* Safari */
+		@-webkit-keyframes spin {
+		  0% { -webkit-transform: rotate(0deg); }
+		  100% { -webkit-transform: rotate(360deg); }
+		}
+
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+
+		@media (min-width:768px){
+			header.masthead{
+				padding-top:4rem;
+				padding-bottom:4rem;
+			}
+			header.masthead h1{
+				font-size:3rem;
+			}
+		}
+		.res-container{}
+		.result-box{width:80%;margin-left:auto;margin-right:auto;height: 260px;padding:10px;overflow-y: auto;}
+		#loading {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999999999;
+			overflow: hidden;
+			background: rgba(255, 255, 255, 0.7);
+		}
+		.loader {
+			border: 8px solid #f3f3f3;
+			border-top: 8px solid #363e75;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;
+			left: 50%;
+			margin-left: -4em;
+			display: block;
+			animation: spin 2s linear infinite;
+		}
+		.loader,
+		.loader:after {
+			display: block;
+			position: absolute;
+			top: 50%;
+			margin-top: -4.05em;
+		}
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+		.footer{position:absolute;bottom:0px;width:100%;}
+		#datafetch_form{padding:0px 40px;}
+		.json-result{}
+		.result-box p{text-align:left;}
+
+		#resultstemplate  {
+		position: absolute;
+		margin-bottom: 2.5em;
+		}
+		textarea {
+		margin-bottom: 0.8em;
+		}
+		.form-outline {
+		margin-bottom: 1em;
+		}
+
+		.form-control > textarea { width: 100%; height:100% margin-bottom: 2.5em;}
+	</style>
+</head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav class="navbar navbar-light bg-light static-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" >Real Fake Job Predictor</a>
+		</div>
+	</nav>
+
+	<!-- Testimonials -->
+	<section class="testimonials text-center">
+		<div class="container-fluid">
+			<h4 class="my-4 title">Predictor</h4>
+			<div class="row">
+				<div class="col-md-6 col-xs-12">
+					<br/>
+					<form method="post" id="datafetch_form">
+						<div class="form-group">
+						<!-- <select class="form-control" name="title" id="title-list">
+                        </select> -->
+                        <input type="text" name="title" id="title-list" class="form-control" placeholder="job title">
+
+						</div>
+						<div class="form-group">
+						<input type="text" class="form-control" name="location" id="location-list" placeholder="location">
+                       
+						</div>
+						<div class="form-group">
+						<input type="text" class="form-control" name="department"  id="department-list" placeholder="department">
+                        
+						</div>
+						<div class="form-group">
+						<input type="text" class="form-control" name="salary_range" id="salary-list" placeholder="salary range">
+                        
+						</div>
+						<div class="form-outline">
+						<textarea class="form-control" name = "company_profile" id="textAreaExample3" list="company_profile-list" placeholder="Company profile" rows="2"></textarea>
+					    <datalist id="company_profile">
+                            <input type="text" value=We help teachers get safe &amp; secure jobs abroad :)>We help teachers get safe &amp; secure jobs abroad :)</option><option value=Daily Secret is one of the fastest growing digital media brand for premium audiences around the world, serving 1.8 million subscribers every day. Covering over 35 markets, its signature daily email newsletters reveal coveted bars, restaurants, shops and all around local ‘secrets’ while integrating brands around passion points. Headquartered in New York, NY and Athens, Greece, Daily Secret is backed by leading media investors, such as Greycroft Partners, eVentures, Ronald Lauder, Dick Parsons, and Andy Russell. To learn more about us visit #URL_e830679f90409d3a40bc46c9110e3c627418d0bff3a005f2a78539860ed584c2#>Daily Secret is one of the fastest growing digital media brand for premium audiences around the world, serving 1.8 million subscribers every day. Covering over 35 markets, its signature daily email newsletters reveal coveted bars, restaurants, shops and all around local ‘secrets’ while integrating brands around passion points. Headquartered in New York, NY and Athens, Greece, Daily Secret is backed by leading media investors, such as Greycroft Partners, eVentures, Ronald Lauder, Dick Parsons, and Andy Russell. To learn more about us visit #URL_e830679f90409d3a40bc46c9110e3c627418d0bff3a005f2a78539860ed584c2#</option><option value=Ahoy there adventurer! Join us aboard the good ship Locish as we bravely steer our beloved vessel across the ocean of ambition, and navigate the high seas of start-up culture…Locish is a mobile app that helps its users disovover new places, join discussions around them and share their stories.  So…what you waiting for? See how shipshape we are right now at #URL_2ec06ca8c69d6c5aafff682381c713ac492335f571c1545b2d4eb74f958c17d6#>Ahoy there adventurer! Join us aboard the good ship Locish as we bravely steer our beloved vessel across the ocean of ambition, and navigate the high seas of start-up culture…Locish is a mobile app that helps its users disovover new places, join discussions around them and share their stories.  So…what you waiting for? See how shipshape we are right now at #URL_2ec06ca8c69d6c5aafff682381c713ac492335f571c1545b2d4eb74f958c17d6#</option><option value=Newmedica is a dynamic, innovative UK healthcare company that works in partnership with the NHS to deliver specialist clinical eye care services safely and effectively. Newmedica is growing rapidly and operates services in a number of locations around the UK. Newmedica clinics operate in both fixed and mobile settings, in the community and on NHS Trust sites.>Newmedica is a dynamic, innovative UK healthcare company that works in partnership with the NHS to deliver specialist clinical eye care services safely and effectively. Newmedica is growing rapidly and operates services in a number of locations around the UK. Newmedica clinics operate in both fixed and mobile settings, in the community and on NHS Trust sites.</option><option value=NO PROFILE>NO PROFILE</option><option value=The Accion  story began more than 100 years ago in the Austin,Tx with one family owned establishment. Today, Accion  has grown into a nationwide Organazation with over 260 stores. Accion success is attributed to our unique niche in the market offering current   finance option at competitive prices paired with customer service and a personal shopping experience. Join the Accion story today!>The Accion  story began more than 100 years ago in the Austin,Tx with one family owned establishment. Today, Accion  has grown into a nationwide Organazation with over 260 stores. Accion success is attributed to our unique niche in the market offering current   finance option at competitive prices paired with customer service and a personal shopping experience. Join the Accion story today!</option><option value=Aker Solutions is a global provider of products, systems and services to the oil and gas industry. Our engineering, design and technology bring discoveries into production and maximize recovery from each petroleum field. We employ approximately 28,000 people in about 30 countries. Go to #URL_0fa3f7c5e23a16de16a841e368006cae916884407d90b154dfef3976483a71ae# for more information on our business, people and values.>Aker Solutions is a global provider of products, systems and services to the oil and gas industry. Our engineering, design and technology bring discoveries into production and maximize recovery from each petroleum field. We employ approximately 28,000 people in about 30 countries. Go to #URL_0fa3f7c5e23a16de16a841e368006cae916884407d90b154dfef3976483a71ae# for more information on our business, people and values.</option><option value=Aptitude Staffing Solutions has redesigned the recruiting wheel. Our innovative new platform cuts the recruiting time in half, yields scientifically-proven results and clients and candidates enjoy a pleasant experience through advanced, simple to use technology and a tenured, industry-experienced recruiting team. Join us in a fresh new experience of leveraging your career...the way it should be! All represented candidates enjoy the following perks:Expert negotiations, maximizing total compensation package Signing bonus by Aptitude Staffing in addition to client signing bonus (if applicable)1 Year access to AnyPerkRelocation Services for out of town candidatesContinued education in your area of profession, seminars, workshops and other skill development events Contract employees receive quarterly bonuses for the duration of their project Direct-Hire employees receive double bonues ($2,000) per referred/recruited candidate into their newly appointed companyAll candidates are encouraged to participate in our Referral Bonus Program &amp; earn $500 - $1,000 per hired referral            >Aptitude Staffing Solutions has redesigned the recruiting wheel. Our innovative new platform cuts the recruiting time in half, yields scientifically-proven results and clients and candidates enjoy a pleasant experience through advanced, simple to use technology and a tenured, industry-experienced recruiting team. Join us in a fresh new experience of leveraging your career...the way it should be! All represented candidates enjoy the following perks:Expert negotiations, maximizing total compensation package Signing bonus by Aptitude Staffing in addition to client signing bonus (if applicable)1 Year access to AnyPerkRelocation Services for out of town candidatesContinued education in your area of profession, seminars, workshops and other skill development events Contract employees receive quarterly bonuses for the duration of their project Direct-Hire employees receive double bonues ($2,000) per referred/recruited candidate into their newly appointed companyAll candidates are encouraged to participate in our Referral Bonus Program &amp; earn $500 - $1,000 per hired referral            </option>
+                        </datalist>
+                        </div>
+
+						<div class="form-group">
+							<input type="text" class="form-control" name="description" id="description" placeholder="job description">
+						</div>
+
+						<div class="form-group">
+							<input type="text" class="form-control" name="requirements" id="requirements" placeholder="requirements">
+						</div>
+
+						<div class="form-group">
+							<input type="text" class="form-control" name="benefits" id="benefits" placeholder="job benefits">
+						</div>
+						
+						<div class="form-group"><button type="submit" class="form-control btn-primary" >Predict</button></div>
+
+					</form>
+				</div>
+
+				<div class="res-container  col-md-6 col-xs-12">
+					<div class="result-box shadow rounded-lg">
+						<h5 class="title ">Results</h5>
+                             {% if prediction == 1 %}
+                                <div class="output-json text-danger">Fraud!</div>
+                             {% elif prediction == 0 %}
+                                <div class="output-json text-success">Not Fraud</div>
+                             {% endif %}
+							 
+					</div>
+				</div>
+
+			</div>						
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-6 h-100 text-center my-auto mx-auto">
+					<ul class="list-inline mb-1">
+						<li class="list-inline-item"><a href="https://github.com/Jack8861/">About</a></li>
+						<li class="list-inline-item">&sdot;</li>
+						<li class="list-inline-item"><a href="https://github.com/Jack8861/">Contact</a></li>
+                        <li class="list-inline-item">&sdot;</li>
+						<li class="list-inline-item"><a href="https://ineuron.ai/privacy.html">Privacy Policy</a></li>
+					</ul>
+					<p class="text-muted small mb-2 mb-lg-0"></p>
+				</div>
+			</div>
+		</div>
+	</footer>
+	
+	
+	<div id="loading"><div class="loader"></div></div>
+	<!-- Bootstrap core JavaScript -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('#loading').hide();
+			$("#customfile").click(function(e){
+				e.preventDefault();
+				$('#loading').show();
+				var path = $("#csvfile").val();
+				$.ajax({
+					//change url below
+					url : "/predict",
+					type: "POST",
+					data: {filepath:path},
+					success: function(response){
+						$(".json-result").html('<p>"Prediction File created at !!!Prediction_Output_File/Predictions.csvand few of the predictions are"</p><pre>' + response + '</pre>');	
+						$('#loading').hide();
+					}
+				});
+			});
+			$("#defaultfile").click(function(e){
+				e.preventDefault();
+				$('#loading').show();
+				var path = $(this).attr("data-path");
+				$.ajax({
+					//change url below
+					url : "/predict",
+					type: "POST",
+					data: {filepath:path},
+					success: function(response){
+						$(".json-result").html('<p>"Prediction File created !!!</p><pre>' + response + '</pre>');
+						$('#loading').hide();
+					}
+				});
+				
+			});
+		});
+	</script>
+
+
+</body>
+
+</html>
